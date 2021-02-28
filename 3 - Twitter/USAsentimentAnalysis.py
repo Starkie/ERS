@@ -25,18 +25,16 @@ def isState(state):
 
 def readTweets(file):
     with open(file, "r") as ins:
-
         for line in ins:          
-         if (len(line)> 1): ## to avoid empty lines 
-           data = json.loads(line)
+            if (len(line)> 1): ## to avoid empty lines 
+                data = json.loads(line)
 
-           if "created_at" in data:
-               state = getState(data)
+                if "created_at" in data:
+                    state = getState(data)
 
-               if isState(state):
-                 if "text" in data:
-                    print (data["text"])
-                    print (state)
+                    if isState(state) and "text" in data:
+                        print (data["text"])
+                        print (state)
 
 # Declare the script parameters.
 parser = argparse.ArgumentParser(description='Analyses the sentiment on a given country from a collection of tweets.')
