@@ -5,6 +5,8 @@ import csv
 import json
 import statistics
 import pathlib
+import pandas
+import plotly.express as px
 
 from analysis.tweet_afinn import analyse_sentiment
 
@@ -59,10 +61,10 @@ def _read_tweet(tweet):
 
     return None
 
-
 # Declare the script parameters.
 parser = argparse.ArgumentParser(description='Analyses the sentiment on a given country from a collection of tweets.')
 parser.add_argument('file', type=str, help='Path to the file containing the tweets encoded in the JSON format.')
+parser.add_argument('-c', '--country', type=str, choices=["usa"], help='The country to analyse the tweets.')
 
 args = parser.parse_args()
 
@@ -76,4 +78,6 @@ if not pathlib.Path(file).exists():
 sentiments_by_state = _analyse_tweets_sentiments_by_state(file)
 
 mean_sentiment_by_state = {key: statistics.mean(value) for key, value in sentiments_by_state.items()}
-median_sentiment_by_state = {key: statistics.median(value) for key, value in sentiments_by_state.items()}
+
+fig = px.choropleth(locations=mean_sentiment_by_state.keys(), color=mean_sentiment_by_state, locationmode="USA-states", scope="usa")
+fig.show()
