@@ -2,8 +2,7 @@
 
 import json
 import pathlib
-
-from afinn import analyse_sentiment
+from analysis.custom_afinn import analyse_sentiment
 
 states_names = {'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas', 'CA': 'California', 'CO': 'Colorado',
 'CT': 'Connecticut', 'DE': 'Delaware', 'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois',
@@ -14,7 +13,7 @@ states_names = {'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansa
 'RI': 'Rhode Island', 'SC': 'South Carolina', 'SD': 'South Dakota', 'TN':'Tennessee', 'TX': 'Texas', 'UT': 'Utah',
 'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington','WV': 'West Virginia', 'WI': 'Wisconsin', 'WY': 'Wyoming'}
 
-def analyse_tweets_sentiments_by_state(file, country):
+def analyse_tweets_sentiments_by_state(file):
     sentiments_by_state = dict()
 
     with open(file, "r") as ins:
