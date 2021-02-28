@@ -22,13 +22,13 @@ def _load_afinn():
 
 afinn = _load_afinn()
 
-# Analyse the sentiment of a given tweet.
-def analyse_sentiment(tweet):
-    clean_tweet = _remove_punctuation(tweet)
+# Analyse the sentiment of a given text.
+def analyse_sentiment(text):
+    clean_text = _remove_punctuation(text)
 
     sentiment = 0
 
-    for word in clean_tweet.split():
+    for word in clean_text.split():
         lowerWord = word.lower()
         sentiment += afinn.get(lowerWord, 0)
 
