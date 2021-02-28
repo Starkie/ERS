@@ -17,35 +17,47 @@ states_names = {'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansa
 'RI': 'Rhode Island', 'SC': 'South Carolina', 'SD': 'South Dakota', 'TN':'Tennessee', 'TX': 'Texas', 'UT': 'Utah',
 'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington','WV': 'West Virginia', 'WI': 'Wisconsin', 'WY': 'Wyoming'}
 
-def getState(data):
+def _get_state(data):
     if data["place"] != None and data["place"]["country_code"] == "US":
         state = str(data["place"]["full_name"]).upper().split(", ")
         if len(state) > 1:
             return state[1]
 
-def isState(state):
+def _is_state(state):
     return state in states_names.keys()
 
-def readTweets(file):
+def _analyse_tweets_sentiments_by_state(file):
     sentiments_by_state = dict()
 
     with open(file, "r") as ins:
         for line in ins:
-            if (len(line)> 1): ## to avoid empty lines
-                data = json.loads(line)
+            state_text = _read_tweet(line)
 
-                if "created_at" in data:
-                    state = getState(data)
+            if state_text is None:
+                continue
 
-                    if isState(state) and "text" in data:
-                        sentiment = analyse_sentiment(data["text"])
+            (state, text) = state_text
 
-                        if sentiments_by_state.get(state) is None:
-                            sentiments_by_state[state] = []
+            sentiment = analyse_sentiment(text)
 
-                        sentiments_by_state[state].append(sentiment)
+            if sentiments_by_state.get(state) is None:
+                sentiments_by_state[state] = []
+
+            sentiments_by_state[state].append(sentiment)
 
     return sentiments_by_state
+
+def _read_tweet(tweet):
+    if (len(tweet)> 1): ## to avoid empty lines
+        data = json.loads(tweet)
+
+        if "created_at" in data:
+            state = _get_state(data)
+
+            if _is_state(state) and "text" in data:
+                return (state, data["text"])
+
+    return None
 
 
 # Declare the script parameters.
@@ -61,7 +73,7 @@ if not pathlib.Path(file).exists():
     raise FileNotFoundError(file)
 
 # Process the tweets.
-sentiments_by_state = readTweets(file)
+sentiments_by_state = _analyse_tweets_sentiments_by_state(file)
 
 mean_sentiment_by_state = {key: statistics.mean(value) for key, value in sentiments_by_state.items()}
 median_sentiment_by_state = {key: statistics.median(value) for key, value in sentiments_by_state.items()}
