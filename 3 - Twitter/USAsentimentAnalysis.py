@@ -36,6 +36,12 @@ def readTweets(file):
                         print (data["text"])
                         print (state)
 
+def load_afinn():
+    afinn_path = pathlib.Path('./AFINN-111.txt').resolve()
+
+    with open(afinn_path, 'r') as afinn_file:
+        return dict(csv.reader(afinn_file, delimiter='\t'))
+
 # Declare the script parameters.
 parser = argparse.ArgumentParser(description='Analyses the sentiment on a given country from a collection of tweets.')
 parser.add_argument('file', type=str, help='Path to the file containing the tweets encoded in the JSON format.')
