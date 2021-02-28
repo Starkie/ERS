@@ -28,14 +28,10 @@ for language in locations_by_language:
 
     fig.add_trace(go.Scattergeo(
         locationmode = 'country names',
-        # lon = df_sub['lon'],
-        # lat = df_sub['lat'],
         lat=latitudes,
         lon=longitudes,
         text = language,
         marker = dict(
-            # size = df_sub['pop']/scale,
-            # color = colors[i],
             line_width=0.5,
             sizemode = 'area'
         ),

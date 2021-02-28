@@ -26,10 +26,6 @@ def analyse_tweets_language_and_location(file):
 
             language_by_location[language].append(coordinates)
 
-            # TODO: Remove.
-            if len(language_by_location.items()) >= 100:
-                break
-
     return language_by_location
 
 def _read_tweet(tweet):
