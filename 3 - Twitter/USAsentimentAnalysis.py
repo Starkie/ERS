@@ -3,6 +3,7 @@
 import json
 import csv
 import argparse
+import pathlib
 
 states_names = {'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas', 'CA': 'California', 'CO': 'Colorado',
 'CT': 'Connecticut', 'DE': 'Delaware', 'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois',
@@ -25,17 +26,16 @@ def isState(state):
         return True
     return False 
 
-def readTweets():
-    file = "output.txt"
-
-    array = []
+def readTweets(file):
     with open(file, "r") as ins:
 
         for line in ins:          
-         if ( len(line)> 1): ## to avoid empty lines 
+         if (len(line)> 1): ## to avoid empty lines 
            data = json.loads(line)
+
            if "created_at" in data:
                state = getState(data)
+
                if isState(state):
                  if "text" in data:
                     print (data["text"])
@@ -46,3 +46,12 @@ parser = argparse.ArgumentParser(description='Analyses the sentiment on a given 
 parser.add_argument('file', type=str, help='Path to the file containing the tweets encoded in the JSON format.')
 
 args = parser.parse_args()
+
+# Check if the given file exists.
+file = pathlib.Path(args.file).resolve()
+
+if not pathlib.Path(file).exists():
+    raise FileNotFoundError(file)
+
+# Process the tweets.
+readTweets(file)
