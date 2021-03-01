@@ -16,6 +16,9 @@ def analyse_tweets_language_and_location(file):
                 continue
 
             coordinates = tweet["geo"]["coordinates"]
+
+            # Use the language property when available to avoid flooding the language recognition library.
+            # Otherwise we get the HTTP 429 error: Too many requests.
             if tweet["lang"]:
                 language = tweet["lang"]
             else :
