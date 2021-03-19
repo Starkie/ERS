@@ -4,6 +4,8 @@ import argparse
 import pathlib
 import requests
 
+from lastfm import lastfm_api
+
 BASE_URL = "http://ws.audioscrobbler.com/2.0/?method="
 
 # Declare the script parameters.
@@ -23,5 +25,10 @@ if not api_key:
     secrets.close()
 
 # Check if the provided user exists.
-print(user)
-print(api_key)
+print(f'Retrieving information from the user \'{user}\'')
+
+userInfo = lastfm_api.user_info(user, api_key)
+
+if 'error' in userInfo:
+    print(f"{userInfo['message']} - {user}")
+    exit()
