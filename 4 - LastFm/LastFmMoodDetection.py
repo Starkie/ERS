@@ -32,3 +32,7 @@ userInfo = lastfm_api.user_info(user, api_key)
 if 'error' in userInfo:
     print(f"{userInfo['message']} - {user}")
     exit()
+
+user_tracks = lastfm_api.user_tracks_from_lastweek(user, api_key)
+
+print(user_tracks)
