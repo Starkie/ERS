@@ -41,10 +41,10 @@ def user_tracks_from_lastweek(user, api_key):
         tracks.extend(new_tracks)
 
         counter += len(new_tracks)
-        print(f"Read {counter} out of {recent_tracks['@attr']['total']} tracks.")
+        total = int(recent_tracks['@attr']['total'])
+        print(f"Read {counter} out of {total} tracks.")
 
-        # If the obtained page has less than 50 tracks, we have reached the end.
-        if len(new_tracks) < 50:
+        if counter >= total:
             break
 
         # Rate limit the requests to the API.
