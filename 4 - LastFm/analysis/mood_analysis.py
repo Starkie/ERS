@@ -19,7 +19,11 @@ def analyse_lyrics(lyrics_by_artist):
 def _analyse_song_lyrics(lyrics):
     clean_lyrics = _clean_lyrics(lyrics)
 
-    emotion_analyser = NRCLex(clean_lyrics)
+    # Get the top 3 emotions.
+    emotion_scores = NRCLex(clean_lyrics).affect_frequencies
+    top3_song_emotions = sorted(emotion_scores, key = emotion_scores.get, reverse = True)[:3]
+
+    return {key: emotion_scores[key] for key in top3_song_emotions}
 
 def _clean_lyrics(lyrics):
     # Remove the verse markers from Genius.
