@@ -51,3 +51,22 @@ def user_tracks_from_lastweek(user, api_key):
         sleep(5)
 
     return tracks
+
+# Groups the tracks by unique artist.
+def group_tracks_by_artist(tracks):
+    songs_by_artist = dict()
+
+    for song in tracks:
+        name = song['name']
+        artist = song['artist']
+
+        # Use the ID to avoid collisions of artists with the same name.
+        # Sometimes the mbid is not filled out. Use the artists name instead.
+        artist_id = artist['mbid'] if artist['mbid'] else artist['#text']
+
+        if artist_id not in songs_by_artist:
+            songs_by_artist[artist_id] = {"name": artist['#text'], "songs": []}
+
+        songs_by_artist[artist_id]['songs'].append(name)
+
+    return songs_by_artist

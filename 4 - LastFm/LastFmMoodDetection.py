@@ -34,5 +34,6 @@ if 'error' in userInfo:
     exit()
 
 user_tracks = lastfm_api.user_tracks_from_lastweek(user, api_key)
+songs_by_artist = lastfm_api.group_tracks_by_artist(user_tracks)
 
 print(user_tracks)
