@@ -5,6 +5,7 @@ import pathlib
 import requests
 
 from lastfm import lastfm_api
+from genius import genius_api
 
 BASE_URL = "http://ws.audioscrobbler.com/2.0/?method="
 
@@ -36,4 +37,7 @@ if 'error' in userInfo:
 user_tracks = lastfm_api.user_tracks_from_lastweek(user, api_key)
 songs_by_artist = lastfm_api.group_tracks_by_artist(user_tracks)
 
-print(user_tracks)
+print(f"Found {len(user_tracks)} songs by {len(songs_by_artist)} different artists.")
+
+lyrics_by_artist = genius_api.lyrics_by_artists(songs_by_artist)
+print(lyrics_by_artist)
