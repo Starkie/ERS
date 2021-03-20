@@ -29,6 +29,8 @@ def user_tracks_from_lastweek(user):
     lastWeekDate = datetime(today.year, today.month, today.day) - timedelta(days = 7)
     lastWeekDateTimeStamp = int(lastWeekDate.timestamp())
 
+    print(f"Last.FM - Reading songs listened since '{lastWeekDate}' by '{user}'.")
+
     counter = 0
     tracks = []
 
@@ -48,7 +50,7 @@ def user_tracks_from_lastweek(user):
 
         counter += len(new_tracks)
         total = int(recent_tracks['@attr']['total'])
-        print(f"Read {counter} out of {total} tracks.")
+        print(f"Last.FM - Read {counter} out of {total} tracks.")
 
         if counter >= total:
             break
