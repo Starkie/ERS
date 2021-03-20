@@ -2,22 +2,28 @@
 
 import requests
 import itertools
+import os
 from datetime import date, datetime, timedelta
 from time import sleep
 
 BASE_URL = "http://ws.audioscrobbler.com/2.0/?method="
 
+# If no API key is provided, read it from the secrets store.
+_secrets = open(os.path.join(os.path.dirname(__file__), ".secrets"))
+_api_key = _secrets.read().strip()
+_secrets.close()
+
 # Base method to make calls to the Last.FM API.
-def _request(method, api_key, params = ''):
-    requestUrl = f"{BASE_URL}{method}{params}&api_key={api_key}&format=json"
+def _request(method, params = ''):
+    requestUrl = f"{BASE_URL}{method}{params}&api_key={_api_key}&format=json"
 
     return requests.get(requestUrl).json()
 
 # Fetches the information of the given user.
-def user_info(user, api_key):
-    return _request('user.getinfo', api_key, params=f"&user={user}")
+def user_info(user):
+    return _request('user.getinfo', params=f"&user={user}")
 
-def user_tracks_from_lastweek(user, api_key):
+def user_tracks_from_lastweek(user):
     # Get the tracks from the last 7 days.
     today = date.today()
     lastWeekDate = datetime(today.year, today.month, today.day) - timedelta(days = 7)
@@ -28,7 +34,7 @@ def user_tracks_from_lastweek(user, api_key):
 
     # Iterate over the paged query.
     for i in itertools.count(1):
-        response = _request('user.getRecentTracks', api_key, params=f"&user={user}&from={lastWeekDateTimeStamp}&page={i}")
+        response = _request('user.getRecentTracks', params=f"&user={user}&from={lastWeekDateTimeStamp}&page={i}")
 
         if 'error' in response:
             print(response['message'])
