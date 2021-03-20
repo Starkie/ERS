@@ -42,7 +42,7 @@ def _clean_lyrics(lyrics):
 def _remove_punctuation(content):
     res = content
 
-    for char in '“”' + string.punctuation:
+    for char in '“”’' + string.punctuation:
         res = res.replace(char, " ")
 
     return res
