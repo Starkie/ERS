@@ -14,7 +14,10 @@ def lyrics_by_artists(songs_by_artist):
     lyrics_by_artist = []
 
     for key in songs_by_artist:
-        lyrics_by_artist.append(_get_artist_lyrics(songs_by_artist[key]))
+        artist_lyrics = _get_artist_lyrics(songs_by_artist[key])
+
+        if artist_lyrics != None:
+            lyrics_by_artist.append(artist_lyrics)
 
     return lyrics_by_artist
 
@@ -36,5 +39,10 @@ def _get_artist_lyrics(artist_songs):
 
         # Add waits to ratelimit the requests.
         sleep(3)
+
+    # If no lyrics for the song were found, the artist should not be considered.
+    # This is usually the case for artists with only instrumental songs.
+    if len(artist_lyrics['songs']) == 0:
+        return None
 
     return artist_lyrics
