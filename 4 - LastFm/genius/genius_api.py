@@ -29,13 +29,10 @@ def _get_artist_lyrics(artist_songs):
 
     # Convert the songs to a set to a avoid duplication.
     for song in set(artist_songs['songs']):
-        # Search by the artist and song to avoid incorrect results.
-        found_song = genius_API.search_song(f"{artist_name} {song}")
+        found_lyrics = _get_song_lyrics(artist_name, song)
 
-        if found_song != None:
-            artist_lyrics['songs'][song] = found_song.lyrics
-        else:
-            print(f"Genius - The song '{artist_name} - {song}' was not found.")
+        if found_lyrics:
+            artist_lyrics['songs'][song] = found_lyrics
 
         # Add waits to ratelimit the requests.
         sleep(3)
@@ -46,3 +43,19 @@ def _get_artist_lyrics(artist_songs):
         return None
 
     return artist_lyrics
+
+def _get_song_lyrics(artist, song):
+    try:
+        # Search by the artist and song to avoid incorrect results.
+        found_song = genius_API.search_song(f"{artist} {song}")
+
+        # Check that the artist of the found song matches the expected one.
+        if found_song != None and found_song.artist.lower() == artist.lower() :
+            return found_song.lyrics
+    except:
+        print('Genius - Connection timed out.')
+
+    print(f"Genius - The song '{artist} - {song}' was not found.")
+
+    return None
+
