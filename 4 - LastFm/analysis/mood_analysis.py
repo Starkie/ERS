@@ -1,4 +1,6 @@
 import nltk
+import numpy as np
+import pandas as pd
 import re
 import string
 from nrclex import NRCLex, top_emotions, build_word_affect
@@ -71,3 +73,24 @@ def _remove_punctuation(content):
         res = res.replace(char, " ")
 
     return res
+
+def normalize_emotions_by_artist(song_emotions_by_artist):
+    # Initialize the vector array.
+    accumulated_data = [0.0] * len(emotions)
+
+    # Accumulate the emotions of each song.
+    for artist in song_emotions_by_artist[1:]:
+        for song_name in artist['songs']:
+            song_emotions = artist['songs'][song_name]
+            accumulated_data = np.add(accumulated_data, song_emotions)
+
+    # Normalize the vector.
+    normalized_data = accumulated_data / np.sqrt(np.sum(accumulated_data**2))
+
+    categories = [emo.capitalize() for emo in emotions]
+
+    dataframe = pd.DataFrame(dict(
+        r=normalized_data,
+        categories=categories))
+
+    return dataframe
