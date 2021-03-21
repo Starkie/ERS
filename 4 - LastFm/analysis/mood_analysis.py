@@ -12,17 +12,30 @@ nltk.download("stopwords")
 stopwords = set(nltk.corpus.stopwords.words('english'))
 
 def analyse_lyrics(lyrics_by_artist):
-    for lyrics in lyrics_by_artist:
-        for song_name in lyrics['songs']:
-            _analyse_song_lyrics(lyrics['songs'][song_name])
+    song_emotions_by_artist = []
+
+    for artist in lyrics_by_artist:
+        emotions_by_song = dict()
+
+        for song_name in artist['songs']:
+            emotions_by_song[song_name] = _analyse_song_lyrics(artist['songs'][song_name])
+
+        song_emotions_by_artist.append({'name': artist['name'], 'songs': emotions_by_song})
+
+    return song_emotions_by_artist
 
 def _analyse_song_lyrics(lyrics):
     clean_lyrics = _clean_lyrics(lyrics)
 
     # Get the top 3 emotions.
     emotion_scores = NRCLex(clean_lyrics).affect_frequencies
-    top3_song_emotions = sorted(emotion_scores, key = emotion_scores.get, reverse = True)[:3]
+    sorted_song_emotions = sorted(emotion_scores, key = emotion_scores.get, reverse = True)
 
+    # Take the 3 top emotions as the most representative of the song.
+    top3_song_emotions = [emotion for emotion in sorted_song_emotions
+                        if emotion != 'positive' and emotion != 'negative'][:3]
+
+    # TODO: Take the orientation (positive or negative) separately.
     return {key: emotion_scores[key] for key in top3_song_emotions}
 
 def _clean_lyrics(lyrics):
