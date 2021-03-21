@@ -74,7 +74,7 @@ def _remove_punctuation(content):
 
     return res
 
-def normalize_emotions_by_artist(song_emotions_by_artist):
+def normalize_user_emotions(song_emotions_by_artist):
     # Initialize the vector array.
     accumulated_data = [0.0] * len(emotions)
 
@@ -87,10 +87,4 @@ def normalize_emotions_by_artist(song_emotions_by_artist):
     # Normalize the vector.
     normalized_data = accumulated_data / np.sqrt(np.sum(accumulated_data**2))
 
-    categories = [emo.capitalize() for emo in emotions]
-
-    dataframe = pd.DataFrame(dict(
-        r=normalized_data,
-        categories=categories))
-
-    return dataframe
+    return normalized_data.tolist()
