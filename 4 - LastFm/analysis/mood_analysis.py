@@ -7,12 +7,15 @@ from nrclex import NRCLex, top_emotions, build_word_affect
 nltk.download("brown")
 nltk.download("punkt")
 
+# The categories that NRCLex uses to categorize words.
+emotions = ['joy', 'trust', 'fear', 'surprise', 'sadness', 'disgust', 'anger', 'anticipation']
+
 # Stopwords to clean the lyrics.
 nltk.download("stopwords")
 stopwords = set(nltk.corpus.stopwords.words('english'))
 
 def analyse_lyrics(lyrics_by_artist):
-    song_emotions_by_artist = []
+    song_emotions_by_artist = [{ "categories": emotions }]
 
     for artist in lyrics_by_artist:
         emotions_by_song = dict()
@@ -25,18 +28,23 @@ def analyse_lyrics(lyrics_by_artist):
     return song_emotions_by_artist
 
 def _analyse_song_lyrics(lyrics):
-    clean_lyrics = _clean_lyrics(lyrics)
+    lyrics_keywords = _clean_lyrics(lyrics)
 
-    # Get the top 3 emotions.
-    emotion_scores = NRCLex(clean_lyrics).affect_frequencies
+    # Analyse the emotions of the song lyrics.
+    emotion_scores = NRCLex(lyrics_keywords).affect_frequencies
     sorted_song_emotions = sorted(emotion_scores, key = emotion_scores.get, reverse = True)
 
     # Take the 3 top emotions as the most representative of the song.
     top3_song_emotions = [emotion for emotion in sorted_song_emotions
-                        if emotion != 'positive' and emotion != 'negative'][:3]
+                          if emotion != 'positive' and emotion != 'negative'][:3]
 
-    # TODO: Take the orientation (positive or negative) separately.
-    return {key: emotion_scores[key] for key in top3_song_emotions}
+    # The orientation (positive or negative) is considered separately.
+    # TODO: Include the orientation in the result.
+    # orientation = 'positive' if (emotion_scores['positive'] >= emotion_scores['negative']) else 'negative'
+
+    # Use the categories to create the row of the song.
+    return [emotion_scores[emotion] if (emotion in top3_song_emotions) else 0.0
+            for emotion in emotions]
 
 def _clean_lyrics(lyrics):
     # Remove the verse markers from Genius.
