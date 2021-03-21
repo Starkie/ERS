@@ -6,14 +6,14 @@ import string
 from nrclex import NRCLex, top_emotions, build_word_affect
 
 # NLTK tokens required by NRCLex
-nltk.download("brown")
-nltk.download("punkt")
+nltk.download("brown", quiet = True)
+nltk.download("punkt", quiet = True)
 
 # The categories that NRCLex uses to categorize words.
 emotions = ['joy', 'trust', 'fear', 'surprise', 'sadness', 'disgust', 'anger', 'anticipation']
 
 # Stopwords to clean the lyrics.
-nltk.download("stopwords")
+nltk.download("stopwords", quiet = True)
 stopwords = set(nltk.corpus.stopwords.words('english'))
 
 def analyse_lyrics(lyrics_by_artist):
