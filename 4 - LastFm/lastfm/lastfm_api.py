@@ -67,14 +67,19 @@ def group_tracks_by_artist(tracks):
     for song in tracks:
         name = song['name']
         artist = song['artist']
+        date_listened = datetime.fromtimestamp(int(song['date']['uts']))
 
         # Use the ID to avoid collisions of artists with the same name.
         # Sometimes the mbid is not filled out. Use the artists name instead.
         artist_id = artist['mbid'] if artist['mbid'] else artist['#text']
 
         if artist_id not in songs_by_artist:
-            songs_by_artist[artist_id] = {"name": artist['#text'], "songs": []}
+            songs_by_artist[artist_id] = {"name": artist['#text'], "songs": {}}
 
-        songs_by_artist[artist_id]['songs'].append(name)
+        if name not in songs_by_artist[artist_id]['songs']:
+            songs_by_artist[artist_id]['songs'][name] = []
+
+        # Store the date and time when the track was listened.
+        songs_by_artist[artist_id]['songs'][name].append(date_listened)
 
     return songs_by_artist

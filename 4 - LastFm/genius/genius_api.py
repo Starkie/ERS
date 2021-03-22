@@ -32,7 +32,7 @@ def _get_artist_lyrics(artist_songs):
         found_lyrics = _get_song_lyrics(artist_name, song)
 
         if found_lyrics:
-            artist_lyrics['songs'][song] = found_lyrics
+            artist_lyrics['songs'][song] = {'lyrics':found_lyrics, 'date_listened': artist_songs['songs'][song] }
 
         # Add waits to ratelimit the requests.
         sleep(3)
