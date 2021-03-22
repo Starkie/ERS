@@ -5,6 +5,12 @@ import plotly.graph_objects as go
 import plotly.offline as pyo
 
 def visualize_as_radar_chart(emotion_by_user, emotions):
+
+    chart = _create_radar_chart(emotion_by_user, emotions)
+
+    pyo.plot(chart)
+
+def _create_radar_chart(emotion_by_user, emotions):
     # !: Copy the list and reverse it because plotly flips the categories.
     categories = [emo.capitalize() for emo in emotions]
     categories.reverse()
@@ -24,4 +30,4 @@ def visualize_as_radar_chart(emotion_by_user, emotions):
         fig.add_trace(
             go.Scatterpolar(r = user_emotions, name = user, theta = categories, fill = 'toself'))
 
-    pyo.plot(fig)
+    return fig
