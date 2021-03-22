@@ -1,9 +1,6 @@
 # !/usr/bin/env python3
 
 import argparse
-import pathlib
-import requests
-import numpy
 
 from lastfm import lastfm_api
 from genius import genius_api
@@ -31,9 +28,9 @@ def _analyse_lastfm_user(user):
     lyrics_by_artist = genius_api.lyrics_by_artists(songs_by_artist)
 
     song_emotions_by_artist = mood_analysis.analyse_lyrics(lyrics_by_artist)
-    emotions_dataframe = mood_analysis.normalize_user_emotions(song_emotions_by_artist)
+    user_emotions = mood_analysis.normalize_user_emotions(song_emotions_by_artist)
 
-    return emotions_dataframe
+    return user_emotions
 
 # Parse the given Last.fm users.
 args = parser.parse_args()
