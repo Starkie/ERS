@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 import re
 import string
+
+from datetime import date, datetime
 from nrclex import NRCLex, top_emotions, build_word_affect
 
 # NLTK tokens required by NRCLex
@@ -23,7 +25,9 @@ def analyse_lyrics(lyrics_by_artist):
         emotions_by_song = dict()
 
         for song_name in artist['songs']:
-            emotions_by_song[song_name] = _analyse_song_lyrics(artist['songs'][song_name])
+            song = artist['songs'][song_name]
+            song_emotions = _analyse_song_lyrics(song['lyrics'])
+            emotions_by_song[song_name] = {'emotions': song_emotions, 'date_listened': song['date_listened']}
 
         song_emotions_by_artist.append({'name': artist['name'], 'songs': emotions_by_song})
 
@@ -66,16 +70,35 @@ def _remove_punctuation(content):
     return res
 
 def normalize_user_emotions(song_emotions_by_artist):
-    # Initialize the vector array.
-    accumulated_data = [0.0] * len(emotions)
+    days_emotions = {}
 
     # Accumulate the emotions of each song.
     for artist in song_emotions_by_artist[1:]:
         for song_name in artist['songs']:
-            song_emotions = artist['songs'][song_name]
-            accumulated_data = np.add(accumulated_data, song_emotions)
+            song = artist['songs'][song_name]
+            song_emotions = song['emotions']
 
-    # Normalize the vector.
-    normalized_data = accumulated_data / np.sqrt(np.sum(accumulated_data**2))
+            for date_listen in song['date_listened']:
+                date_str = date_listen.strftime("%d/%m/%Y")
+
+                if date_str not in days_emotions:
+                    days_emotions[date_str] = [0.0] * len(emotions)
+
+                days_emotions[date_str] = np.add(days_emotions[date_str], song_emotions)
+
+    total = [0.0] * len(emotions)
+
+    for day in days_emotions:
+        total = np.add(total, days_emotions[day])
+
+        # Normalize the already used vector.
+        days_emotions[day] = _normalize_vector(days_emotions[day])
+
+    total = _normalize_vector(total)
+
+    return {'days': days_emotions, 'total': total}
+
+def _normalize_vector(data):
+    normalized_data = data / np.sqrt(np.sum(data**2))
 
     return normalized_data.tolist()
