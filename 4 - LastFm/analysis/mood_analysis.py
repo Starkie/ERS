@@ -34,18 +34,9 @@ def _analyse_song_lyrics(lyrics):
 
     # Analyse the emotions of the song lyrics.
     emotion_scores = NRCLex(lyrics_keywords).affect_frequencies
-    sorted_song_emotions = sorted(emotion_scores, key = emotion_scores.get, reverse = True)
-
-    # Take the 3 top emotions as the most representative of the song.
-    top3_song_emotions = [emotion for emotion in sorted_song_emotions
-                          if emotion != 'positive' and emotion != 'negative'][:3]
-
-    # The orientation (positive or negative) is considered separately.
-    # TODO: Include the orientation in the result.
-    # orientation = 'positive' if (emotion_scores['positive'] >= emotion_scores['negative']) else 'negative'
 
     # Use the categories to create the row of the song.
-    return [emotion_scores[emotion] if (emotion in top3_song_emotions) else 0.0
+    return [emotion_scores[emotion] if (emotion in emotion_scores) else 0.0
             for emotion in emotions]
 
 def _clean_lyrics(lyrics):
