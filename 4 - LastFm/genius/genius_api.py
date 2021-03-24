@@ -37,9 +37,6 @@ def _get_artist_lyrics(artist_songs):
         if found_lyrics:
             artist_lyrics['songs'][song] = {'lyrics':found_lyrics, 'date_listened': artist_songs['songs'][song]}
 
-        # Add waits to ratelimit the requests.
-        sleep(3)
-
     # If no lyrics for the song were found, the artist should not be considered.
     # This is usually the case for artists with only instrumental songs.
     if len(artist_lyrics['songs']) == 0:
@@ -52,7 +49,7 @@ def _get_song_lyrics(artist, song):
         cached_lyrics = lyrics_cache.get_lyrics(artist, song)
 
         if cached_lyrics:
-            return cached_lyrics['lyrics']
+            return cached_lyrics[2]
 
         # Search by the artist and song to avoid incorrect results.
         found_song = genius_API.search_song(f"{artist} {song}")
@@ -60,6 +57,9 @@ def _get_song_lyrics(artist, song):
         # Check that the artist of the found song matches the expected one.
         if found_song != None and found_song.artist.lower() == artist.lower() :
             lyrics_cache.store_lyrics(artist, song, found_song.lyrics)
+
+            # Add waits to ratelimit the requests.
+            sleep(3)
 
             return found_song.lyrics
     except Exception as ex:
