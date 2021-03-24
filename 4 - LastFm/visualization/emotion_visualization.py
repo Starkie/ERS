@@ -3,9 +3,9 @@
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.offline as pyo
+import pandas as pd
 
 def visualize_as_radar_chart(emotion_by_user, emotions):
-
     chart = _create_radar_chart(emotion_by_user, emotions)
 
     pyo.plot(chart)
@@ -31,3 +31,16 @@ def _create_radar_chart(emotion_by_user, emotions):
             go.Scatterpolar(r = user_emotions, name = user, theta = categories, fill = 'toself'))
 
     return fig
+
+def visualize_as_daily_plotbar(user_emotions, emotions):
+    chart = _create_time_series_chart(user_emotions, emotions)
+
+    pyo.plot(chart)
+
+def _create_time_series_chart(emotion_by_user, emotions):
+    df = pd.DataFrame.from_dict(emotion_by_user['days'], orient='index', columns=emotions)
+    df = df.sort_index(axis='index', ascending=True)
+
+    chart = px.line(df)
+
+    return chart
