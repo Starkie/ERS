@@ -25,7 +25,7 @@ def _create_radar_chart(emotion_by_user, emotions):
 
     for user in emotion_by_user:
         # !: Copy the list and reverse it because plotly flips the categories.
-        user_emotions = emotion_by_user[user][::-1]
+        user_emotions = emotion_by_user[user]['total'][::-1]
 
         fig.add_trace(
             go.Scatterpolar(r = user_emotions, name = user, theta = categories, fill = 'toself'))
