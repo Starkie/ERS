@@ -32,7 +32,7 @@ def _create_radar_chart(emotion_by_user, emotions):
 
     return fig
 
-def visualize_as_daily_plotbar(username, user_emotions, emotions):
+def visualize_as_time_series(username, user_emotions, emotions):
     chart = _create_time_series_chart(username, user_emotions, emotions)
 
     pyo.plot(chart)
