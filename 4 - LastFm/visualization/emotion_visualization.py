@@ -32,15 +32,17 @@ def _create_radar_chart(emotion_by_user, emotions):
 
     return fig
 
-def visualize_as_daily_plotbar(user_emotions, emotions):
-    chart = _create_time_series_chart(user_emotions, emotions)
+def visualize_as_daily_plotbar(username, user_emotions, emotions):
+    chart = _create_time_series_chart(username, user_emotions, emotions)
 
     pyo.plot(chart)
 
-def _create_time_series_chart(emotion_by_user, emotions):
-    df = pd.DataFrame.from_dict(emotion_by_user['days'], orient='index', columns=emotions)
+def _create_time_series_chart(username, user_emotions, emotions):
+    df = pd.DataFrame.from_dict(user_emotions['days'], orient='index', columns=emotions)
     df = df.sort_index(axis='index', ascending=True)
 
     chart = px.line(df)
+
+    chart.update_layout(title_text = f'{username} daily emotions.')
 
     return chart

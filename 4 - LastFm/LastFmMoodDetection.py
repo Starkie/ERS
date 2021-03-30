@@ -54,11 +54,14 @@ for user in users:
 
         continue
 
-    user_emotions = _analyse_lastfm_user(user)
+    user_emotions = _analyse_lastfm_user(user, lastWeekDate)
     emotion_by_user[user] = user_emotions
 
 if len(emotion_by_user) == 0:
     print("No valid user provided.")
     exit()
+
+for user in emotion_by_user:
+    emotion_visualization.visualize_as_daily_plotbar(user, emotion_by_user[user], mood_analysis.emotions)
 
 emotion_visualization.visualize_as_radar_chart(emotion_by_user, mood_analysis.emotions)
