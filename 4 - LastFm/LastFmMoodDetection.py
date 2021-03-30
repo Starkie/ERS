@@ -2,6 +2,8 @@
 
 import argparse
 
+from datetime import date, datetime, timedelta
+
 from lastfm import lastfm_api
 from genius import genius_api
 from analysis import mood_analysis
@@ -19,8 +21,8 @@ def _is_valid_lastfm_user(user):
 
     return user
 
-def _analyse_lastfm_user(user):
-    user_tracks = lastfm_api.user_tracks_from_lastweek(user)
+def _analyse_lastfm_user(user, start_date):
+    user_tracks = lastfm_api.user_tracks_from_date(user, start_date)
     songs_by_artist = lastfm_api.group_tracks_by_artist(user_tracks)
 
     print(f"Found {len(user_tracks)} songs by {len(songs_by_artist)} different artists.")
@@ -28,7 +30,7 @@ def _analyse_lastfm_user(user):
     lyrics_by_artist = genius_api.lyrics_by_artists(songs_by_artist)
 
     song_emotions_by_artist = mood_analysis.analyse_lyrics(lyrics_by_artist)
-    user_emotions = mood_analysis.normalize_user_emotions(song_emotions_by_artist)
+    user_emotions = mood_analysis.normalize_user_emotions(song_emotions_by_artist, start_date)
 
     return user_emotions
 
@@ -37,6 +39,10 @@ args = parser.parse_args()
 users = args.user_id[0]
 
 emotion_by_user = dict()
+
+# Get the tracks from the last 7 days.
+today = date.today()
+lastWeekDate = datetime(today.year, today.month, today.day) - timedelta(days = 7)
 
 # Analyse the provided users
 for user in users:

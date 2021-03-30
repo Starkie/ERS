@@ -3,7 +3,7 @@
 import requests
 import itertools
 import os
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from time import sleep
 
 BASE_URL = "http://ws.audioscrobbler.com/2.0/?method="
@@ -23,20 +23,15 @@ def _request(method, params = ''):
 def user_info(user):
     return _request('user.getinfo', params=f"&user={user}")
 
-def user_tracks_from_lastweek(user):
-    # Get the tracks from the last 7 days.
-    today = date.today()
-    lastWeekDate = datetime(today.year, today.month, today.day) - timedelta(days = 7)
-    lastWeekDateTimeStamp = int(lastWeekDate.timestamp())
-
-    print(f"Last.FM - Reading songs listened since '{lastWeekDate}' by '{user}'.")
+def user_tracks_from_date(user, start_date):
+    print(f"Last.FM - Reading songs listened since '{start_date}' by '{user}'.")
 
     counter = 0
     tracks = []
 
     # Iterate over the paged query.
     for i in itertools.count(1):
-        response = _request('user.getRecentTracks', params=f"&user={user}&from={lastWeekDateTimeStamp}&page={i}")
+        response = _request('user.getRecentTracks', params=f"&user={user}&from={int(start_date.timestamp())}&page={i}")
 
         if 'error' in response:
             print(response['message'])

@@ -4,7 +4,7 @@ import pandas as pd
 import re
 import string
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from nrclex import NRCLex, top_emotions, build_word_affect
 
 # NLTK tokens required by NRCLex
@@ -69,8 +69,8 @@ def _remove_punctuation(content):
 
     return res
 
-def normalize_user_emotions(song_emotions_by_artist):
-    days_emotions = {}
+def normalize_user_emotions(song_emotions_by_artist, start_date):
+    days_emotions = _initialize_days_emotions(start_date)
 
     # Accumulate the emotions of each song.
     for artist in song_emotions_by_artist[1:]:
@@ -80,10 +80,6 @@ def normalize_user_emotions(song_emotions_by_artist):
 
             for date_listen in song['date_listened']:
                 date_str = date_listen.strftime("%d/%m/%Y")
-
-                if date_str not in days_emotions:
-                    days_emotions[date_str] = [0.0] * len(emotions)
-
                 days_emotions[date_str] = np.add(days_emotions[date_str], song_emotions)
 
     total = [0.0] * len(emotions)
@@ -98,7 +94,20 @@ def normalize_user_emotions(song_emotions_by_artist):
 
     return {'days': days_emotions, 'total': total}
 
+def _initialize_days_emotions(start_date):
+    today = datetime.today()
+
+    num_days = (today - start_date).days + 1
+    days_list = [today - timedelta(days=x) for x in range(num_days)]
+
+    days_emotions = { day.strftime("%d/%m/%Y") : [0.0] * len(emotions) for day in days_list}
+
+    return days_emotions
+
 def _normalize_vector(data):
+    if np.count_nonzero(data) == 0:
+        return data
+
     normalized_data = data / np.sqrt(np.sum(data**2))
 
     return normalized_data.tolist()
