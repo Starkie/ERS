@@ -20,6 +20,7 @@ def _create_radar_chart(emotion_by_user, emotions):
 
     # Rotate the the axis so Joy is in the 90º position.
     fig.update_layout(
+        title_text = 'User emotions spectrum',
         polar = dict(
             angularaxis = dict(rotation=135, direction='counterclockwise')))
 
