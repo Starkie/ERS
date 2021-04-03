@@ -5,6 +5,9 @@ import plotly.graph_objects as go
 import plotly.offline as pyo
 import pandas as pd
 
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.manifold import MDS
+
 def visualize_as_radar_chart(emotion_by_user, emotions):
     chart = _create_radar_chart(emotion_by_user, emotions)
 
@@ -51,5 +54,39 @@ def _create_time_series_chart(username, user_emotions, emotions):
 
     chart.update_traces(mode='markers+lines')
     chart.update_layout(title_text = f'{username} daily emotions.')
+
+    return chart
+
+def visualize_as_proximity_matrix(emotion_by_user, emotions):
+    chart = _create_proximity_matrix_chart(emotion_by_user, emotions)
+
+    pyo.plot(chart)
+
+def _create_proximity_matrix_chart(emotion_by_user, emotions):
+    user_total_emo = {}
+
+    for user in emotion_by_user:
+        user_total_emo[user] = emotion_by_user[user]['total']
+
+    df = pd.DataFrame.from_dict(user_total_emo, orient='index', columns=emotions)
+
+    cosine_distances = 1 - cosine_similarity(df)
+
+    mds = MDS(n_components=2, dissimilarity="precomputed", random_state=1)
+    proximity_matrix = mds.fit_transform(cosine_distances)
+
+    xs, ys = proximity_matrix[:, 0], proximity_matrix[:, 1]
+
+    x_dist = []
+    y_dist = []
+    names = []
+
+    for x, y, name in zip(xs, ys, emotion_by_user):
+        x_dist.append(x)
+        y_dist.append(y)
+        names.append(name)
+
+    chart = px.scatter(x= x_dist, y= y_dist, color=names)
+    chart.update_layout(title_text = f'Users proximity matrix')
 
     return chart

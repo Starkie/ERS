@@ -61,7 +61,10 @@ if len(emotion_by_user) == 0:
     print("No valid user provided.")
     exit()
 
+if len(users) > 1:
+    emotion_visualization.visualize_as_proximity_matrix(emotion_by_user, mood_analysis.emotions)
+
 for user in emotion_by_user:
-    emotion_visualization.visualize_as_daily_plotbar(user, emotion_by_user[user], mood_analysis.emotions)
+    emotion_visualization.visualize_as_time_series(user, emotion_by_user[user], mood_analysis.emotions)
 
 emotion_visualization.visualize_as_radar_chart(emotion_by_user, mood_analysis.emotions)
