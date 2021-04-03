@@ -40,10 +40,16 @@ def visualize_as_time_series(username, user_emotions, emotions):
 
 def _create_time_series_chart(username, user_emotions, emotions):
     df = pd.DataFrame.from_dict(user_emotions['days'], orient='index', columns=emotions)
+
+    # Change the type of the 'date' column from string to datetime to be able to sort it correctly.
+    df.index.names = ['Date']
+    df.index = pd.to_datetime(df.index, dayfirst = True)
+
     df = df.sort_index(axis='index', ascending=True)
 
     chart = px.line(df)
 
+    chart.update_traces(mode='markers+lines')
     chart.update_layout(title_text = f'{username} daily emotions.')
 
     return chart
