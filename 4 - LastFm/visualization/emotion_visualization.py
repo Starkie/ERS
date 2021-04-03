@@ -86,7 +86,8 @@ def _create_proximity_matrix_chart(emotion_by_user, emotions):
         y_dist.append(y)
         names.append(name)
 
-    chart = px.scatter(x= x_dist, y= y_dist, color=names)
+    chart = px.scatter(x= x_dist, y= y_dist, color=names, text=names)
     chart.update_layout(title_text = f'Users proximity matrix')
+    chart.update_traces(textposition='top center')
 
     return chart
